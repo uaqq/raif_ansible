@@ -1,0 +1,20 @@
+---
+- name: Exclude packages from upgrade
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop: "{{ exclude_packages }}"
+
+- name: Update all packages
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: true
+    force_apt_get: true
+  notify: "Reboot system"
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    force_apt_get: true
+  notify: Reboot system
